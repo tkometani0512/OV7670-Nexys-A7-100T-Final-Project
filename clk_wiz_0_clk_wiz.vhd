@@ -65,7 +65,8 @@ port
  (-- Clock in ports
   clk_in1           : in     std_logic;
   -- Clock out ports
-  clk_out1          : out    std_logic
+  clk_out1          : out    std_logic;
+  clk_out2 : out std_logic 
  );
 end clk_wiz_0_clk_wiz;
 
@@ -77,11 +78,14 @@ architecture xilinx of clk_wiz_0_clk_wiz is
   signal clkfbout_buf_clk_wiz_0     : std_logic;
   signal clkfboutb_unused : std_logic;
   signal clk_out1_clk_wiz_0          : std_logic;
+
+  signal clk_out2_clk_wiz_0 : std_logic ; -- new to make second clk divided from same input 100 / 4 for 25 camera needs
+  signal clkout2b_unused : std_logic ;
+
   signal clkout0b_unused         : std_logic;
   signal clkout1_unused   : std_logic;
   signal clkout1b_unused         : std_logic;
   signal clkout2_unused   : std_logic;
-  signal clkout2b_unused         : std_logic;
   signal clkout3_unused   : std_logic;
   signal clkout3b_unused  : std_logic;
   signal clkout4_unused   : std_logic;
@@ -121,12 +125,15 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKFBOUT_MULT_F      => 10.125,
     CLKFBOUT_PHASE       => 0.000,
     CLKFBOUT_USE_FINE_PS => FALSE,
-    CLKOUT0_DIVIDE_F     => 25.25,
+    CLKOUT0_DIVIDE_F     => 25.25, -- 100 * 10 / 20 = 50 Mhz desired for VGA timing 
     CLKOUT0_PHASE        => 0.000,
     CLKOUT0_DUTY_CYCLE   => 0.500,
     CLKOUT0_USE_FINE_PS  => FALSE,
     CLKIN1_PERIOD        => 10.0,
-    REF_JITTER1          => 0.010)
+    REF_JITTER1          => 0.010,
+    CLKOUT1_DIVIDE => 42, -- 100 input clk * 10 clkbout_mult_f / 40 clkout1_divide = 25 desired clk
+    CLKOUT1_PHASE => 0.000,
+    CLKOUT1_DUTY_CYCLE => 0.500)
   port map
     -- Output clocks
    (
@@ -134,7 +141,7 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKFBOUTB           => clkfboutb_unused,
     CLKOUT0             => clk_out1_clk_wiz_0,
     CLKOUT0B            => clkout0b_unused,
-    CLKOUT1             => clkout1_unused,
+    CLKOUT1             => clk_out2_clk_wiz_0,
     CLKOUT1B            => clkout1b_unused,
     CLKOUT2             => clkout2_unused,
     CLKOUT2B            => clkout2b_unused,
@@ -177,6 +184,13 @@ clk_in1_clk_wiz_0 <= clk_in1;
   port map
    (O => clkfbout_buf_clk_wiz_0,
     I => clkfbout_clk_wiz_0);
+    
+ clkout2_buf : BUFG
+    port map
+        (
+         O => clk_out2,
+         I => clk_out2_clk_wiz_0
+        );
 
 
 

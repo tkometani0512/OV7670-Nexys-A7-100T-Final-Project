@@ -5,6 +5,7 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY camera_top IS
     PORT (
         clk_in : IN  STD_LOGIC;
+        cam_xclk : out  std_logic;
         VGA_hsync : OUT STD_LOGIC;
         VGA_vsync : OUT STD_LOGIC;
         VGA_red : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -15,7 +16,9 @@ END camera_top;
 
 ARCHITECTURE Behavioral OF camera_top IS
 
-    SIGNAL pixel_clk : STD_LOGIC;
+    signal clk_50 : std_logic; -- 50 for vga, 25 for xclk to camera to activate it 
+    signal clk_25 : std_logic;
+    
     SIGNAL pixel_row : STD_LOGIC_VECTOR(10 DOWNTO 0);
     SIGNAL pixel_col : STD_LOGIC_VECTOR(10 DOWNTO 0);
     SIGNAL red_in    : STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -27,12 +30,13 @@ BEGIN
     clkgen : ENTITY work.clk_wiz_0
         PORT MAP (
             clk_in1  => clk_in,
-            clk_out1 => pixel_clk
+            clk_out1 => clk_50, --vga
+            clk_out2 => clk_25 -- camera
         );
 
     vgasync : ENTITY work.vga_sync
         PORT MAP (
-            pixel_clk => pixel_clk,
+            pixel_clk => clk_50,
             red_in => red_in,
             green_in => green_in,
             blue_in => blue_in,

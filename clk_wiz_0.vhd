@@ -76,7 +76,8 @@ port
  (-- Clock in ports
   clk_in1           : in     std_logic;
   -- Clock out ports
-  clk_out1          : out    std_logic
+  clk_out1          : out    std_logic;
+  clk_out2 : out std_logic 
  );
 end clk_wiz_0;
 
@@ -89,7 +90,8 @@ port
  (-- Clock in ports
   clk_in1           : in     std_logic;
   -- Clock out ports
-  clk_out1          : out    std_logic
+  clk_out1          : out    std_logic;
+  clk_out2 : out std_logic
  );
 end component;
 
@@ -101,7 +103,8 @@ begin
    -- Clock in ports
    clk_in1 => clk_in1,
   -- Clock out ports  
-   clk_out1 => clk_out1              
+   clk_out1 => clk_out1,
+   clk_out2 => clk_out2             
  );
 
 end xilinx;
