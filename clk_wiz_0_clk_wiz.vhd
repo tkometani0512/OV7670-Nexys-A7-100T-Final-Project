@@ -125,13 +125,13 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKFBOUT_MULT_F      => 10.125,
     CLKFBOUT_PHASE       => 0.000,
     CLKFBOUT_USE_FINE_PS => FALSE,
-    CLKOUT0_DIVIDE_F     => 25.25, -- 100 * 10 / 20 = 50 Mhz desired for VGA timing 
+    CLKOUT0_DIVIDE_F     => 25.25, -- 100 * 10.25 / 25.25 ~ 40 Mhz desired for VGA timing is 40, I tried 50 and it gave mixed results 
     CLKOUT0_PHASE        => 0.000,
     CLKOUT0_DUTY_CYCLE   => 0.500,
     CLKOUT0_USE_FINE_PS  => FALSE,
     CLKIN1_PERIOD        => 10.0,
     REF_JITTER1          => 0.010,
-    CLKOUT1_DIVIDE => 42, -- 100 input clk * 10 clkbout_mult_f / 40 clkout1_divide = 25 desired clk
+    CLKOUT1_DIVIDE => 42, -- 100 input clk * 10.125 clkbout_mult_f / 42 clkout1_divide = 24.1 ~ desired clk is 24 clk
     CLKOUT1_PHASE => 0.000,
     CLKOUT1_DUTY_CYCLE => 0.500)
   port map
