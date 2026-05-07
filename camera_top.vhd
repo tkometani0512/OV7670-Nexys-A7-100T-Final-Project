@@ -1,124 +1,104 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-entity camera_top is
-    port (
-        clk_100 : in std_logic;
-
-        -- VGA outputs
-        vga_r  : out std_logic_vector(3 downto 0);
-        vga_g  : out std_logic_vector(3 downto 0);
-        vga_b  : out std_logic_vector(3 downto 0);
-        vga_hs : out std_logic;
-        vga_vs : out std_logic;
-
-        -- Camera pins kept here only so your XDC does not complain
-        cam_xclk  : out std_logic;
-        cam_pclk  : in  std_logic;
-        cam_vsync : in  std_logic;
-        cam_href  : in  std_logic;
-        cam_d     : in  std_logic_vector(7 downto 0);
-        cam_sioc  : out std_logic;
-        cam_siod  : inout std_logic
+ENTITY camera_top IS
+    PORT (
+        clk_in : IN  STD_LOGIC;
+        VGA_hsync : OUT STD_LOGIC;
+        VGA_vsync : OUT STD_LOGIC;
+        VGA_red : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        VGA_green : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        VGA_blue : OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
     );
-end camera_top;
+END camera_top;
 
-architecture Behavioral of camera_top is
+ARCHITECTURE Behavioral OF camera_top IS
 
-    signal clk_25    : std_logic;
+    SIGNAL pixel_clk : STD_LOGIC;
+    SIGNAL pixel_row : STD_LOGIC_VECTOR(10 DOWNTO 0);
+    SIGNAL pixel_col : STD_LOGIC_VECTOR(10 DOWNTO 0);
+    SIGNAL red_in    : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL green_in  : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL blue_in   : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
-    signal pixel_row : std_logic_vector(10 downto 0);
-    signal pixel_col : std_logic_vector(10 downto 0);
+BEGIN
 
-    signal red_in    : std_logic_vector(3 downto 0);
-    signal green_in  : std_logic_vector(3 downto 0);
-    signal blue_in   : std_logic_vector(3 downto 0);
-
-begin
-
-    -- Your class clock wizard: 100 MHz in, 25 MHz out
-    clk_inst : entity work.clk_wiz_0
-        port map (
-            clk_in1  => clk_100,
-            clk_out1 => clk_25
+    clkgen : ENTITY work.clk_wiz_0
+        PORT MAP (
+            clk_in1  => clk_in,
+            clk_out1 => pixel_clk
         );
 
-    -- Temporarily send 25 MHz to camera XCLK too
-    cam_xclk <= clk_25;
-
-    -- Camera config disabled for VGA-only test
-    cam_sioc <= '1';
-    cam_siod <= 'Z';
-
-    -- VGA sync module
-    vga_inst : entity work.vga_sync
-        port map (
-            pixel_clk => clk_25,
-
-            red_in    => red_in,
-            green_in  => green_in,
-            blue_in   => blue_in,
-
-            red_out   => vga_r,
-            green_out => vga_g,
-            blue_out  => vga_b,
-
-            hsync     => vga_hs,
-            vsync     => vga_vs,
-
+    vgasync : ENTITY work.vga_sync
+        PORT MAP (
+            pixel_clk => pixel_clk,
+            red_in => red_in,
+            green_in => green_in,
+            blue_in => blue_in,
+            red_out => VGA_red,
+            green_out => VGA_green,
+            blue_out => VGA_blue,
+            hsync => VGA_hsync,
+            vsync => VGA_vsync,
             pixel_row => pixel_row,
             pixel_col => pixel_col
         );
 
-    -- VGA test pattern: vertical color bars
-    process(pixel_col, pixel_row)
-        variable x : integer;
-        variable y : integer;
-    begin
-        x := to_integer(unsigned(pixel_col));
-        y := to_integer(unsigned(pixel_row));
+    -- Color bar test pattern
+   process(pixel_col, pixel_row)
+    variable col : integer;
+    variable row : integer;
+    variable cam_col : integer;
+begin
+    col := to_integer(unsigned(pixel_col));
+    row := to_integer(unsigned(pixel_row));
 
-        if x < 80 then
-            red_in   <= "1111";
-            green_in <= "0000";
-            blue_in  <= "0000";
+    red_in   <= "0000";
+    green_in <= "0000";
+    blue_in  <= "0000";
 
-        elsif x < 160 then
-            red_in   <= "0000";
+    -- centered 640x480 image inside 800x600 screen
+    -- left border = 80, right border = 80
+    -- top border = 60, bottom border = 60
+    if (col >= 80) and (col < 720) and
+       (row >= 60) and (row < 540) then
+
+        cam_col := col - 80;
+
+        if cam_col < 80 then
+            red_in <= "1111";
+
+        elsif cam_col < 160 then
             green_in <= "1111";
-            blue_in  <= "0000";
 
-        elsif x < 240 then
-            red_in   <= "0000";
-            green_in <= "0000";
-            blue_in  <= "1111";
+        elsif cam_col < 240 then
+            blue_in <= "1111";
 
-        elsif x < 320 then
-            red_in   <= "1111";
+        elsif cam_col < 320 then
+            red_in <= "1111";
             green_in <= "1111";
-            blue_in  <= "0000";
 
-        elsif x < 400 then
-            red_in   <= "1111";
-            green_in <= "0000";
-            blue_in  <= "1111";
+        elsif cam_col < 400 then
+            red_in <= "1111";
+            blue_in <= "1111";
 
-        elsif x < 480 then
-            red_in   <= "0000";
+        elsif cam_col < 480 then
             green_in <= "1111";
-            blue_in  <= "1111";
+            blue_in <= "1111";
 
-        elsif x < 560 then
-            red_in   <= "1111";
+        elsif cam_col < 560 then
+            red_in <= "1111";
             green_in <= "1111";
-            blue_in  <= "1111";
+            blue_in <= "1111";
 
         else
-            red_in   <= "0000";
+            red_in <= "0000";
             green_in <= "0000";
-            blue_in  <= "0000";
+            blue_in <= "0000";
         end if;
-    end process;
 
-end Behavioral;
+    end if;
+
+end process;
+END Behavioral;
