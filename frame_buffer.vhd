@@ -18,7 +18,7 @@ END frame_buffer;
 ARCHITECTURE Behavioral OF frame_buffer IS
 
     TYPE ram_type IS ARRAY(0 TO 76799) OF STD_LOGIC_VECTOR(11 DOWNTO 0);
-    SHARED VARIABLE ram : ram_type := (OTHERS => X"F00");
+    SHARED VARIABLE ram : ram_type := (OTHERS => X"000");
 
 BEGIN
 
