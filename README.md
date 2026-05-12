@@ -8,7 +8,7 @@ in real time, stored in a Block RAM frame buffer, and displayed centered within
 an 800×600 VGA output. The 320×240 captured image is scaled 2×2 per pixel to
 fill a 640×480 area centered on screen with black borders on all sides.
 
-The system operates entirely in hardware with no processor — all pixel capture,
+The system operates entirely in hardware with no processor all pixel capture,
 buffering, and display logic is implemented in VHDL running on the FPGA.
 
 Two user controls are provided via onboard switches: a freeze frame switch that
