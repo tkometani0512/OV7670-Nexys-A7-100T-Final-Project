@@ -63,7 +63,7 @@ BEGIN
                         ELSE
                             -- Second byte: GGGG BBBB. This is where we have encountered the most trouble. There is currently an issue where red objects and green objects can be seen as whatever color they are set at here howeber blue is always grey which means that the information is being lost somewhere or that all color information is sent simultaneously meaning that it turns out grey. 
                             -- This was changed from before because the previous code, when used caused the screen to be neon and the colors to be constantly changing even when the video worked meaning the color data was mixed up. problem causing the neon was because I was trying to send 565 format to 12 bits. I thought that 12 bits would automatically work with 444 format.
-                                dout <= d(3 downto 0) & hi_byte(3 downto 0) & d(7 downto 4);
+                            dout <= d(3 downto 0) & hi_byte(3 downto 0) & d(7 downto 4);
                                 
                             IF col < 320 AND row < 240 THEN
                                 addr <= STD_LOGIC_VECTOR(

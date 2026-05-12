@@ -13,6 +13,9 @@ ENTITY camera_top IS
         cam_d : IN  STD_LOGIC_VECTOR(7 DOWNTO 0); -- Represent 8 pins d0 -  d7 which are in charge of color data from the camera. After some research it turns out that there are different color formats you can configure the camera to which determines what color each pin actually corresponds to. There is configurations such as RGB565, and yuv/ycbcr 4:2:2 which can be configured in the SCCB/I2C interface which I have to set up as the next step
         cam_sioc : OUT   STD_LOGIC; -- This is for I2c/SCCB (serial camera control bus) connection. SIOC is the clock signal to the camera which sets the pace of data transfer.
         cam_siod : INOUT STD_LOGIC; -- This is the data line where theh setting like brightness, contrast, and color format (RGB444 in our case) is sent.
+       
+        sw_freeze : IN STD_LOGIC; -- switch 0 freezes and unfreezes frame / take a picture
+        sw_invert : IN STD_LOGIC; -- switch 1 inverts video color  
         VGA_hsync : OUT   STD_LOGIC;
         VGA_vsync : OUT   STD_LOGIC;
         VGA_red : OUT   STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -39,6 +42,12 @@ ARCHITECTURE Behavioral OF camera_top IS
     SIGNAL fb_dout : STD_LOGIC_VECTOR(11 DOWNTO 0);
     SIGNAL in_frame : STD_LOGIC := '0';
     SIGNAL config_done : STD_LOGIC;
+    
+    -- Freeze frame signals
+    SIGNAL capture_we : STD_LOGIC; -- Write enable
+    
+    -- Inverting signals
+    SIGNAL pixel_out : STD_LOGIC_VECTOR(11 downto 0);
 
 BEGIN
 
@@ -78,7 +87,7 @@ BEGIN
     fb : ENTITY work.frame_buffer
         PORT MAP (
             clk_a => cam_pclk,
-            we_a => fb_we_a,
+            we_a => capture_we,
             addr_a => fb_addr_a,
             din_a => fb_din_a,
             clk_b => clk_50,
@@ -96,13 +105,22 @@ BEGIN
             dout => fb_din_a,
             we => fb_we_a
         );
-
+        
+    -- when frozen = 1 capture_we is always 0 so BRAM stops being writen
+    -- when frozen = 0 capture_we acts as normal.
+    capture_we <= fb_we_a and not sw_freeze;
+    
+    -- Invert filter
+    pixel_out <= fb_dout XOR (sw_invert & sw_invert & sw_invert & sw_invert & sw_invert & sw_invert &  sw_invert & sw_invert & sw_invert & sw_invert & sw_invert & sw_invert);
+    -- sw_invert is 1 when the switch is on. fb_dout XOR SW_invert for all 12 bits. 0 XOR 0 = 0                    so the table on the left means that anything that if the bits are on then xor outputs 0 while if it is originally 0, then xor makes it 1 when switch is 1 for all 12 bits. if sw is zero nothing changes.
+                                                                                  --1 XOR 0 = 1   unchanged
+                                                                                  --0 XOR 1 = 1   flipped
+                                                                                  --1 XOR 1 = 0   flipped
     -- Color output: BRAM data inside frame, black outside
-    red_in <= fb_dout(11 DOWNTO 8) WHEN in_frame = '1' ELSE "0000";
-    green_in <= fb_dout(7  DOWNTO 4) WHEN in_frame = '1' ELSE "0000";
-    blue_in <= fb_dout(3  DOWNTO 0) WHEN in_frame = '1' ELSE "0000";
-
-
+    red_in <= pixel_out(11 DOWNTO 8) WHEN in_frame = '1' ELSE "0000";
+    green_in <= pixel_out(7  DOWNTO 4) WHEN in_frame = '1' ELSE "0000";
+    blue_in <= pixel_out(3  DOWNTO 0) WHEN in_frame = '1' ELSE "0000";
+    
     -- Clocked address calculation compensating for BRAM latency. I was having trouble with timing. I researched and apparently I needed to compensate for the latency of BRAM because otherwise the signal would be wrong. The BRAM would be too behind for meaningful data transfer.
     PROCESS(clk_50)
         VARIABLE col : INTEGER;
