@@ -119,3 +119,171 @@ PWDN   -> GND  directly (no FPGA pin needed)
 3.3V   -> 3.3V rail  
 GND    -> GND rail
 
+---
+
+## Modifications and New Features
+
+### clk_wiz_0 / clk_wiz_0_clk_wiz (Modified from class starter code)
+The original clock wizard generated a single output clock. A second output
+clock (clk_out2) was added by configuring a second output channel
+(CLKOUT1) with its own BUFG buffer. This second clock runs at approximately
+24MHz and is fed directly to the camera XCLK pin to drive it.
+
+### vga_sync (Modified from class starter code)
+The original vga_sync was configured for a different resolution. Timing
+constants were updated to target 800×600 @ 60Hz because our portable FANGOR
+monitor did not support 640×480. The v_cnt increment logic was also fixed
+as the original used an incorrect FREQ constant that caused the vertical
+counter to increment at the wrong time.
+
+### camera_top (Modified from pong top module)
+Significant modifications were made to the top level:
+- Added all camera input and output ports
+- Instantiated frame_buffer, ov7670_capture, and i2c_config modules
+- Added centering logic to display the 640×480 camera image centered
+  within 800×600 with 80px left and right borders and 60px top and bottom borders
+- Added BRAM read latency compensation using a registered address
+  calculation and in_frame signal to correctly gate color output one
+  cycle ahead of when vga_sync displays it
+- Each camera pixel is displayed as a 2×2 block on screen, mapping the
+  320×240 captured image to fill the 640×480 centered area
+- Added SW1 invert filter and SW0 freeze frame user controls
+
+### frame_buffer.vhd (Written from scratch)
+A dual port Block RAM with:
+- Port A: write port driven by ov7670_capture running on camera PCLK
+- Port B: read port driven by vga_sync running on 40MHz display clock
+- 76,800 locations (320×240 pixels), each storing 12 bits (4R 4G 4B)
+- The two ports operate on completely independent clocks with no conflicts
+
+### ov7670_capture.vhd (Written from scratch)
+The capture module watches four camera signals: PCLK, VSYNC, HREF, and D[7:0].
+It uses a three state FSM to parse the camera timing. WAIT_VSYNC idles until a
+new frame begins. WAIT_HREF waits for a new row to start. CAPTURE reads pixels
+byte by byte on every PCLK pulse. Since each pixel is 16 bits but the data bus
+is only 8 bits wide, two PCLK pulses are needed per pixel. The first byte is
+saved and the second byte is combined with it to form a complete 12 bit RGB
+pixel which is then written to the frame buffer at the correct row and column
+address.
+
+### i2c_config.vhd (Written with AI assistance, register set from Mike Field with modifications to color mode)
+Implements the SCCB protocol (I2C compatible) to configure approximately
+60 OV7670 registers at startup. Key details:
+- 25kHz SCCB clock
+- 40ms power on delay before first transmission
+- 50ms pause after software reset register
+- Proper open drain SIOD using tri-state logic
+- Register set sourced from Mike Field's proven OV7670 configuration
+
+### User Controls (New inputs added after camera proven working)
+
+**SW1 - Color Invert Filter**
+When SW0 is slid up, all 12 bits of every pixel read from the frame buffer
+are XORed with 1, producing a color negative effect in real time. XORing
+with 0 leaves bits unchanged and XORing with 1 flips them, so the single
+switch bit is replicated 12 times to form the XOR mask. The filter applies
+with zero clock cycle latency as a concurrent signal assignment and works
+correctly on both live and frozen frames.
+
+**SW0 - Freeze Frame**
+When SW1 is slid up, the PCLK signal fed to both the capture module and
+the frame buffer write port is gated to zero. With no clock edges the
+capture module cannot increment addresses or assert write enables, so the
+frame buffer holds its last written frame indefinitely. The VGA read port
+continues running normally, displaying the frozen frame. Slide SW1 down
+to resume live feed.
+
+---
+
+## Current Status
+
+- Generates correct 800×600 @ 60Hz VGA timing
+- Centers a 640×480 camera area on the 800×600 display with black borders
+- Captures live video from the OV7670 camera responding to light and motion
+- Stores and retrieves frames using dual port Block RAM
+- Configures the camera via I2C/SCCB at startup
+- SW1 freeze frame working correctly
+- SW0 color invert filter working correctly
+  
+- Color accuracy is still being tuned - the RGB channel mapping from
+  the OV7670 byte stream requires further calibration for fully accurate colors
+
+---
+
+## Images and Videos
+
+
+---
+
+## Summary
+
+### Team Responsibilities
+
+**Tyler Kometani** was responsible for all VHDL development including:
+- All hardware design and implementation
+- Debugging clock, VGA timing, and camera interface issues
+- Writing frame_buffer.vhd and ov7670_capture.vhd from scratch
+- Modifying clk_wiz_0, vga_sync, and camera_top from class starter code
+- Implementing and debugging the I2C configuration module
+- Adding freeze frame and invert filter user controls
+
+**Bryan Barzola** was responsible for:
+- Project documentation and poster
+- Conceptual ideas to be implimented in VHDL
+
+### Timeline
+
+
+
+### Difficulties Encountered
+
+**Monitor compatibility**: The portable FANGOR monitor we home tested with did not support
+640×480 @ 30Hz, requiring the the lab used 800×600 @ 60Hz and centering the
+camera image within that resolution with black borders.
+
+**Clock generation**: The original idea for modification of the clock wizard configuration
+generated an incorrect frequency which caused color and image errors on monitor. This required us to make a new clk for the camera separate from the vga.
+
+**BRAM read latency**: Block RAM takes one clock cycle to return data
+after an address is presented. This caused the image border logic to be
+offset by one pixel, requiring a registered address pipeline to compensate
+so the in_frame gate signal and BRAM data arrive at the same time.
+
+**Camera byte ordering**: The OV7670 outputs RGB444 data in GRB byte
+order rather than the expected RGB order, causing incorrect colors. This
+was identified by cross referencing Mike Field's OV7670 documentation
+which explicitly notes the GRB ordering. Also some sources say that resistors are not already on the board on some models which could be the cause for our lasting issue detecting blue because our configuration may be slightly off without the resistors for the sioc and siod port.
+
+**Wrong formatting and incorrect sizing** : our first attempt had the wrong display resolution compared to the cameras output so it gave noisy pixels across the whole screen. also our I2C configuration was wrong in the addresses so the color was wrong and noisy.
+
+**Physical errors/stupid errors** : originally had very blurry video. After some coding troubleshooting thinking we configured the addresses wrong, it turns out we needed to twist the lens to make it focus. (duh) also camera orininally wasnt working, We forgot to tie down the pins to the breadboard when testing at first.
+
+### AI Assistance Disclosure
+
+This project used GenAI as an assistant for:
+- Troubleshooting VGA timing and clock frequency issues in the beginning before we realized it is not possible on our monitor
+- Generating initial versions of i2c_config.vhd which were then modified for RGB444 timing 
+- Debugging BRAM latency compensation logic, helping fix the ofset from the bram delay
+- Identifying the GRB byte ordering issue by referencing Mike Field's work
+- Generating this README structure
+- attempting to debug coloring issues
+- research finding projects to take inspiration from and what parts of those would be useful
+- Assistance with understanding the datasheet and how it can be implimented into hardware logic
+
+All VHDL was reviewed and understood by the team. The AI was used as a
+debugging and reference tool similar to Stack Overflow or a datasheet.
+The project requirements, hardware connections, and design decisions were
+all made by the team.
+
+### References
+
+- Mike Field (Hamsterworks): OV7670 Camera VHDL implementation
+  http://hamsterworks.co.nz/mediawiki/index.php/OV7670_camera
+- Lauri Võsandi: Piping OV7670 video to VGA output on ZYBO
+  https://lauri.xn--vsandi-pxa.com/hdl/zynq/zybo-ov7670-to-vga.html
+- CPE487 Lab starter code, Professor Byett, Spring 2026
+  https://github.com/byett/dsd/tree/CPE487-Spring2026/Nexys-A7
+- OV7670 Datasheet, Omnivision Technologies
+  https://www.voti.nl/docs/OV7670.pdf
+- OV7670_ArtyA7
+  https://github.com/vogma/OV7670_ArtyA7/tree/main/OV7670_ArtyA7_srcs
