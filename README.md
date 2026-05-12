@@ -100,22 +100,22 @@ produces a real time color negative effect.
 
 OV7670        Nexys A7
 ───────        ────────
-D0     ──────► JA1  (C17)
-D1     ──────► JA2  (D18)
-D2     ──────► JA3  (E18)
-D3     ──────► JA4  (G17)
-D4     ──────► JA7  (D17)
-D5     ──────► JA8  (E17)
-D6     ──────► JA9  (F18)
-D7     ──────► JA10 (G18)
-VSYNC  ──────► JB1  (D14)
-HREF   ──────► JB2  (F16)
-XCLK   ◄────── JB4  (H14)
-SIOC   ◄────── JB7  (E16)
-SIOD   ◄────►  JB8  (F13)
-PCLK   ──────► JB10 (H16)
-RESET  ──────► 3.3V directly (no FPGA pin needed)
-PWDN   ──────► GND  directly (no FPGA pin needed)
-3.3V   ──────► 3.3V rail
-GND    ──────► GND rail
+D0     -> JA1  (C17)
+D1     -> JA2  (D18)
+D2     -> JA3  (E18)
+D3     -> JA4  (G17)
+D4     -> JA7  (D17)
+D5     -> JA8  (E17)
+D6     -> JA9  (F18)
+D7     -> JA10 (G18)
+VSYNC  -> JB1  (D14)
+HREF   -> JB2  (F16)
+XCLK   <- JB4  (H14)
+SIOC   <- JB7  (E16)
+SIOD  <-> JB8  (F13)
+PCLK   -> JB10 (H16)
+RESET  -> 3.3V directly (no FPGA pin needed)
+PWDN   -> GND  directly (no FPGA pin needed)
+3.3V   -> 3.3V rail
+GND    -> GND rail
 
