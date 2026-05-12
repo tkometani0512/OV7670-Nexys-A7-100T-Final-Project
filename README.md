@@ -98,8 +98,8 @@ produces a real time color negative effect.
 
 ### Camera Wiring
 
-OV7670        Nexys A7  
-───────        ────────  
+OV7670    Nexys A7  
+-------------------- 
 D0     -> JA1  (C17)  
 D1     -> JA2  (D18)  
 D2     -> JA3  (E18)  
