@@ -1,5 +1,3 @@
-<img width="1920" height="1080" alt="OV7670_Capture" src="https://github.com/user-attachments/assets/20a869c3-8647-4b17-93fe-b83cae1d2318" />
-<img width="1920" height="1080" alt="OV7670_Capture" src="https://github.com/user-attachments/assets/fd3a7989-33d4-4b8f-96d5-1bb47ff21998" />
 # OV7670-Nexys-A7-100T-Final-Project
 
 ## Project Description
@@ -20,14 +18,7 @@ produces a real time color negative effect.
 ---
 
 ## System Block Diagram
-
-
-
-
-
-
-
-
+<img width="1920" height="1080" alt="OV7670_Capture" src="https://github.com/user-attachments/assets/20a869c3-8647-4b17-93fe-b83cae1d2318" />
 ---
 
 ## Attachments Needed
