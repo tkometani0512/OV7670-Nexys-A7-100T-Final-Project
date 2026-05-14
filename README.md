@@ -198,7 +198,7 @@ to resume live feed.
 
 ---
 
-## Images and Videos
+## Videos
 <p align="center">
   <a href="https://youtube.com/shorts/P0I93yw5hII">
     <img src="youtube.com" width="350" alt="Watch Current Video!"/>
@@ -225,28 +225,39 @@ to resume live feed.
 
 ### Timeline
 
+**April 24** — Researched existing OV7670 FPGA projects and began wiring the camera to the Nexys A7 board.
+
+**April 28** — Attempted to reconstruct existing projects directly from documented GitHub repositories to verify basic camera function.
+
+**April 30** — Switched to using previous labs as a starting base. Began writing ov7670_capture, frame_buffer, and i2c_config all simultaneously.
+
+**May 1** — Restarted from lab files again, keeping the XDC pin assignments from previous work.
+
+**May 6** — Attempted to change the clock to 24MHz and adjust the VGA timing to match the camera resolution.
 <img width="746" height="998" alt="image" src="https://github.com/user-attachments/assets/9ea8b3e4-35e0-484c-905f-a5cc04a9b1a3" />
 
+**May 7** — Previous attempt did not work. Rebuilt everything from Lab 6 to get a clean test pattern on screen.
 <img width="742" height="992" alt="image" src="https://github.com/user-attachments/assets/203430c7-50ae-42f3-bdfb-5574dfa2f618" />
 
+Added the second clock output to clk_wiz_0 for the camera. Added frame_buffer and verified it worked independently using a hardcoded red test pattern.
 <img width="743" height="1002" alt="image" src="https://github.com/user-attachments/assets/1e504848-cea2-4e20-926b-65b9d1d9ccaf" />
 
 
-
+**May 9** — Added ov7670_capture and wired it into camera_top. Changed frame_buffer to take direct input from the capture module and output raw pixel data to the display without I2C camera configuration, confirming the capture pipeline worked.
 <p align="center">
   <a href="https://youtube.com/shorts/6fLIcqSCFhU">
     <img src="youtube.com" width="350" alt="Before I2C"/>
   </a>
 </p>
 
-
-
-
+**May 11** — Created i2c_config and integrated it to configure the camera color format over SCCB at startup.
 <p align="center">
   <a href="https://youtube.com/shorts/f6BBskVkmXg">
     <img src="youtube.com" width="350" alt="With I2C Before RGB444 configuration"/>
   </a>
 </p>
+
+**May 12** — Added SW1 freeze frame and SW0 color invert filter switches.
 
 
 ### Difficulties Encountered
