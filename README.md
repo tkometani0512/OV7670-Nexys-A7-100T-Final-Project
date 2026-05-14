@@ -15,7 +15,6 @@ Two user controls are provided via onboard switches: a freeze frame switch that
 holds the current frame on screen indefinitely, and a color invert filter that
 produces a real time color negative effect.
 
----
 
 ## System Block Diagram
 <img width="1920" height="1080" alt="OV7670_Capture" src="https://github.com/user-attachments/assets/20a869c3-8647-4b17-93fe-b83cae1d2318" />
