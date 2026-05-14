@@ -246,6 +246,7 @@ Added the second clock output to clk_wiz_0 for the camera. Added frame_buffer an
 
 
 **May 9** — Added ov7670_capture and wired it into camera_top. Changed frame_buffer to take direct input from the capture module and output raw pixel data to the display without I2C camera configuration, confirming the capture pipeline worked.
+Click to view on youtube:
 <p align="center">
   <a href="https://youtube.com/shorts/6fLIcqSCFhU">
     <img src="https://img.youtube.com/vi/6fLIcqSCFhU/hqdefault.jpg" width="350" alt="Before I2C"/>
@@ -253,6 +254,7 @@ Added the second clock output to clk_wiz_0 for the camera. Added frame_buffer an
 </p>
 
 **May 11** — Created i2c_config and integrated it to configure the camera color format over SCCB at startup.
+Click to view on youtube:
 <p align="center">
   <a href="https://youtube.com/shorts/f6BBskVkmXg">
     <img src="https://img.youtube.com/vi/f6BBskVkmXg/hqdefault.jpg" width="350" alt="With I2C Before RGB444 configuration"/>
