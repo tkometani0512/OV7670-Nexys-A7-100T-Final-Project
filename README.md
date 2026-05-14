@@ -19,6 +19,10 @@ produces a real time color negative effect.
 
 ## System Block Diagram
 <img width="1920" height="1080" alt="OV7670_Capture" src="https://github.com/user-attachments/assets/20a869c3-8647-4b17-93fe-b83cae1d2318" />
+
+## FSM for ov7670_capture.vhd 
+<img width="1920" height="1080" alt="WAIT_VSYNC" src="https://github.com/user-attachments/assets/c5c09f33-297a-41c4-a1d9-57e9be365cf5" />
+
 ---
 
 ## Attachments Needed
