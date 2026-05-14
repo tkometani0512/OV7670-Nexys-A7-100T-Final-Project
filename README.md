@@ -201,10 +201,9 @@ to resume live feed.
 ## Videos
 <p align="center">
   <a href="https://youtube.com/shorts/P0I93yw5hII">
-    <img src="youtube.com" width="350" alt="Watch Current Video!"/>
+    <img src="https://img.youtube.com/vi/P0I93yw5hII/0.jpg" width="350" alt="Watch Current Video!"/>
   </a>
 </p>
-
 ---
 
 ## Summary
