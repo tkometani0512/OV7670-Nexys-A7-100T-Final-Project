@@ -77,8 +77,8 @@ produces a real time color negative effect.
 | cam_d[5] | E17 (JA8) | Camera data bit 5 |
 | cam_d[6] | F18 (JA9) | Camera data bit 6 |
 | cam_d[7] | G18 (JA10) | Camera data bit 7 |
-| sw_freeze | L16 (SW1) | Slide up to freeze current frame |
-| sw_invert | J15 (SW0) | Slide up to enable color invert filter |
+| sw_freeze | J15 (SW0) | Slide up to freeze current frame |
+| sw_invert | L16 (SW1) | Slide up to enable color invert filter |
 
 ### Outputs from Nexys A7
 
@@ -126,13 +126,6 @@ clock (clk_out2) was added by configuring a second output channel
 (CLKOUT1) with its own BUFG buffer. This second clock runs at approximately
 24MHz and is fed directly to the camera XCLK pin to drive it.
 
-### vga_sync (Modified from class starter code)
-The original vga_sync was configured for a different resolution. Timing
-constants were updated to target 800×600 @ 60Hz because our portable FANGOR
-monitor did not support 640×480. The v_cnt increment logic was also fixed
-as the original used an incorrect FREQ constant that caused the vertical
-counter to increment at the wrong time.
-
 ### camera_top (Modified from pong top module)
 Significant modifications were made to the top level:
 - Added all camera input and output ports
@@ -175,19 +168,19 @@ Implements the SCCB protocol (I2C compatible) to configure approximately
 ### User Controls (New inputs added after camera proven working)
 
 **SW1 - Color Invert Filter**
-When SW0 is slid up, all 12 bits of every pixel read from the frame buffer
+When SW1 is slid up, all 12 bits of every pixel read from the frame buffer
 are XORed with 1, producing a color negative effect in real time. XORing
 with 0 leaves bits unchanged and XORing with 1 flips them, so the single
-switch bit is replicated 12 times to form the XOR mask. The filter applies
+switch bit is replicated 12 times to form the XOR filter. The filter applies
 with zero clock cycle latency as a concurrent signal assignment and works
 correctly on both live and frozen frames.
 
 **SW0 - Freeze Frame**
-When SW1 is slid up, the PCLK signal fed to both the capture module and
+When SW0 is slid up, the PCLK signal fed to both the capture module and
 the frame buffer write port is gated to zero. With no clock edges the
 capture module cannot increment addresses or assert write enables, so the
 frame buffer holds its last written frame indefinitely. The VGA read port
-continues running normally, displaying the frozen frame. Slide SW1 down
+continues running normally, displaying the frozen frame. Slide SW0 down
 to resume live feed.
 
 ---
@@ -199,15 +192,16 @@ to resume live feed.
 - Captures live video from the OV7670 camera responding to light and motion
 - Stores and retrieves frames using dual port Block RAM
 - Configures the camera via I2C/SCCB at startup
-- SW1 freeze frame working correctly
-- SW0 color invert filter working correctly
+- SW0 freeze frame working correctly
+- SW1 color invert filter working correctly
   
 - Color accuracy is still being tuned - the RGB channel mapping from
-  the OV7670 byte stream requires further calibration for fully accurate colors
+  the OV7670 byte stream requires further calibration for fully accurate colors.
 
 ---
 
 ## Images and Videos
+
 
 
 ---
