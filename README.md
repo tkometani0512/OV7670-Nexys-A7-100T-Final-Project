@@ -257,6 +257,7 @@ Click to view on youtube:
     <img src="https://img.youtube.com/vi/f6BBskVkmXg/hqdefault.jpg" width="350" alt="With I2C Before RGB444 configuration"/>
   </a>
 </p>
+
 **May 12** — Added SW1 freeze frame and SW0 color invert filter switches.
 
 
