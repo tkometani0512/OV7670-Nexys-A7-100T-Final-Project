@@ -94,9 +94,7 @@ produces a real time color negative effect.
 | VGA_blue[3:0] | D8,D7,C7,B7 | VGA blue channel 4 bits |
 
 ### Camera Wiring
-
-OV7670    Nexys A7  
--------------------- 
+OV7670  Nexys A7 100T
 D0     -> JA1  (C17)  
 D1     -> JA2  (D18)  
 D2     -> JA3  (E18)  
