@@ -203,7 +203,7 @@ to resume live feed.
 ## Images and Videos
 <p align="center">
   <a href="https://youtube.com/shorts/P0I93yw5hII">
-    <img src="youtube.com" width="350" alt="Watch Video 3"/>
+    <img src="youtube.com" width="350" alt="Watch Current Video!"/>
   </a>
 </p>
 
@@ -237,7 +237,7 @@ to resume live feed.
 
 <p align="center">
   <a href="https://youtube.com/shorts/6fLIcqSCFhU">
-    <img src="youtube.com" width="350" alt="Watch Video 1"/>
+    <img src="youtube.com" width="350" alt="Before I2C"/>
   </a>
 </p>
 
@@ -246,7 +246,7 @@ to resume live feed.
 
 <p align="center">
   <a href="https://youtube.com/shorts/f6BBskVkmXg">
-    <img src="youtube.com" width="350" alt="Watch Video 2"/>
+    <img src="youtube.com" width="350" alt="With I2C Before RGB444 configuration"/>
   </a>
 </p>
 
