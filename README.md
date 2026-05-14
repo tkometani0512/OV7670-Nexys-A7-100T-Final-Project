@@ -201,11 +201,11 @@ to resume live feed.
 ---
 
 ## Images and Videos
-
-
-
-
-
+<p align="center">
+  <a href="https://youtube.com/shorts/P0I93yw5hII">
+    <img src="youtube.com" width="350" alt="Watch Video 3"/>
+  </a>
+</p>
 
 ---
 
@@ -234,6 +234,21 @@ to resume live feed.
 <img width="743" height="1002" alt="image" src="https://github.com/user-attachments/assets/1e504848-cea2-4e20-926b-65b9d1d9ccaf" />
 
 
+
+<p align="center">
+  <a href="https://youtube.com/shorts/6fLIcqSCFhU">
+    <img src="youtube.com" width="350" alt="Watch Video 1"/>
+  </a>
+</p>
+
+
+
+
+<p align="center">
+  <a href="https://youtube.com/shorts/f6BBskVkmXg">
+    <img src="youtube.com" width="350" alt="Watch Video 2"/>
+  </a>
+</p>
 
 
 ### Difficulties Encountered
