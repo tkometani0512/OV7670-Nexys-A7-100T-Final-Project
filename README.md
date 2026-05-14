@@ -205,7 +205,6 @@ Click to view on youtube:
     <img src="https://img.youtube.com/vi/P0I93yw5hII/hqdefault.jpg" width="350" alt="Watch Current Video!"/>
   </a>
 </p>
----
 
 ## Summary
 
